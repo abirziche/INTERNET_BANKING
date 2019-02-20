@@ -1,0 +1,35 @@
+/* Copyright 2018 Andrei-Lucian Birziche */
+	***Sistem monetar de tip Internet Banking***
+Pentru implementarea temei am urmat etapele:
+
+CLIENT -> Verific descriptorii pe care am primit date in felul urmator:
+0 - inseamna ca am primit de la tastatura una dintre comenzile:
+"login <numar_card> <pin>", "logout", "listsold", "transfer <numar_card> <suma>",
+"unlock", "quit", cat si raspunsurile pentru transfer si unlock. Am considerat
+ca, corectitudinea comenzilor este garantata. In functie de input imi construiesc
+mesajul si il trimit serverului. Formatul sau este cel prezentat in enuntul temei.
+Am pastrat global o variabila booleana care sa-mi spuna daca respectivul client
+este loggat pe vreun card sau nu, pentru a stii daca trimit sau nu mesajul catre
+server.
+sock_tcp - inseamna ca am primit raspunsul la mesajul trimis pe socket-ul de tcp,
+asa ca imi ramane sa-l afisez pe ecran si in fisierul de log. In cazul in care
+rezultatul apelului "recv" este 0, inseamna ca serverul a dat quit, deci ramane
+sa inchid clientul.
+sock_udp - inseamna ca am primit raspunsul la mesajul trimis pe socket-ul de udp,
+asa ca imi ramane sa-l afisez pe ecran si in fisierul de log.
+
+SERVER -> Am creat 2 structuri "Data" (unde pastrez informatiile legate de cardurile
+din sistem) si "ClInfo" (unde tin evidenta fiecarui client cand se conecteaza pe un
+card). Am folosit functia "select" pentru a controla descriptorii in acelasi timp.
+Ulterior am verificat ca si in CLIENT, urmatorii descriptori:
+0 - inseamna ca este primita comanda de "quit", deci oprim serverul, astfel clientii
+isi vor opri si ei executia datorita verificarii mai sus mentionate.
+sock_tcp - inseamna ca un client nou vrea sa se conecteze la server asa ca il adaugam
+in multimea cu descriptori.
+sock_udp - inseamna ca se apeleaza din client serviciul de deblocare, asa ca se fac
+operatiile necesare pentru asta.
+i - inseamna ca este un client care asteapta raspuns la comenzile sale. Efectuez
+verificarile necesare, creez raspunsul si il trimit. 
+
+Mentiuni:
+Am considerat numarul maxim de clienti care se pot conecta la server ca fiind 100.
